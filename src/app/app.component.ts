@@ -13,11 +13,15 @@ import { User } from './auth-form/auth-form.interface';
         </button>
       </auth-form>
       <auth-form (submitted)="loginUser($event)">
+
+        <!-- content child of auth-form -->
         <h3>Login</h3>
         <auth-remember (checked)="rememberUser($event)"></auth-remember>
         <button type="submit">
           Login
         </button>
+        <!-- end of content child of auth-form -->
+        
       </auth-form>
     </div>
 
