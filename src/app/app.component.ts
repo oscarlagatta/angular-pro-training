@@ -8,9 +8,15 @@ import { User } from './auth-form/auth-form.interface';
     <div>
       <auth-form (submitted)="createUser($event)">
         <h3>Create Account</h3>
+        <button type="submit">
+          Join user
+        </button>
       </auth-form>
       <auth-form (submitted)="loginUser($event)">
         <h3>Login</h3>
+        <button type="submit">
+          Login
+        </button>
       </auth-form>
     </div>
 
