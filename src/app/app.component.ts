@@ -4,7 +4,6 @@ import { User } from './auth-form/auth-form.interface';
 @Component({
   selector: 'app-root',
   template: `
-  
     <div>
       <auth-form (submitted)="createUser($event)">
         <h3>Create Account</h3>
