@@ -33,7 +33,7 @@ export class AppComponent {
   /**
    * NOTE:
    * If we were using the checkbox inside any particular api request
-   * such as if we want to remember whether the user has been checke in
+   * such as if we want to remember whether the user has been checked in
    * or not, we can bind to a component like in this example.
    * And using a flan inside the component (rememberMe), inside the 
    * loginUser call back we add the (this.rememberMe) to the HTTP request 
