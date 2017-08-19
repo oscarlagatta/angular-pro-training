@@ -1,6 +1,6 @@
 // To accesss to the child component we need ContentChild decorator, 
 // and AfterContentInit 
-import { Component, ChangeDetectorRef, Output, EventEmitter, ViewChildren, AfterViewInit, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
+import { Component, ChangeDetectorRef, ElementRef, Output,ViewChild, EventEmitter, ViewChildren, AfterViewInit, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 
 import { AuthMessageComponent } from './auth-message.component';
 
@@ -11,13 +11,16 @@ import { AuthRememberComponent } from './auth-remember.component';
 
 @Component({
     selector: 'auth-form',
+    styles:[`
+        .email { border-color: #9f72e6;}
+    `],
     template: `
         <div>
             <form (ngSubmit)="onSubmit(form.value)" #form="ngForm">
                 <ng-content select="h3"></ng-content>
                 <label>
                     Email Address
-                    <input type="email" name="email" ngModel>
+                    <input type="email" name="email" ngModel #email>
                 </label>
                 <label>
                     Password
@@ -25,8 +28,6 @@ import { AuthRememberComponent } from './auth-remember.component';
                 </label>
                 <ng-content select="auth-remember"></ng-content>
                 <!-- auth-message component is a view child of the current component -->
-                <auth-message [style.display]="(showMessage ? 'inherit': 'none')"></auth-message>
-                <auth-message [style.display]="(showMessage ? 'inherit': 'none')"></auth-message>
                 <auth-message [style.display]="(showMessage ? 'inherit': 'none')"></auth-message>
                 <ng-content select="button"></ng-content>
             </form>
@@ -38,6 +39,8 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit {
 
     showMessage: boolean;
     
+    @ViewChild('email') email: ElementRef;
+
     /* ViewChildren *
          * The ViewChildren is only available inside 
          * the ngAfterViewInit() because is a live 
@@ -56,6 +59,11 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit {
 
     }    
     ngAfterViewInit() {
+
+        // this.email 
+        this.email.nativeElement.setAttribute('placeholder', 'Enter your email address');
+        this.email.nativeElement.classList.add('email');
+        this.email.nativeElement.focus();
         /* ViewChildren only available*
          * The ViewChildren is only available inside 
          * the ngAfterViewInit()
@@ -161,3 +169,16 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit {
     }
     
 }
+
+
+/* Implementation details*
+ * 
+ * We implemented how to quiery a view child email element
+ * using ElementRef, which gives us access to the native 
+ * element which Angular provides for us,  
+ *         this.email.nativeElement.setAttribute('placeholder', 'Enter your email address');
+ *         this.email.nativeElement.classList.add('email');
+ *         this.email.nativeElement.focus();
+ * 
+ * The native element exposes the DOM node 
+ */

@@ -5,14 +5,7 @@ import { User } from './auth-form/auth-form.interface';
   selector: 'app-root',
   template: `
     <div>
-      <auth-form (submitted)="createUser($event)">
-        <h3>Create Account</h3>
-        <button type="submit">
-          Join user
-        </button>
-      </auth-form>
       <auth-form (submitted)="loginUser($event)">
-
         <!-- content child of auth-form -->
         <h3>Login</h3>
         <auth-remember (checked)="rememberUser($event)"></auth-remember>
