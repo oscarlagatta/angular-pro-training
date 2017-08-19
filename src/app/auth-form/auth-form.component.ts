@@ -1,6 +1,6 @@
 // To accesss to the child component we need ContentChild decorator, 
 // and AfterContentInit 
-import { Component, Output, EventEmitter, ViewChild, AfterViewInit, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
+import { Component, ChangeDetectorRef, Output, EventEmitter, ViewChildren, AfterViewInit, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 
 import { AuthMessageComponent } from './auth-message.component';
 
@@ -26,6 +26,8 @@ import { AuthRememberComponent } from './auth-remember.component';
                 <ng-content select="auth-remember"></ng-content>
                 <!-- auth-message component is a view child of the current component -->
                 <auth-message [style.display]="(showMessage ? 'inherit': 'none')"></auth-message>
+                <auth-message [style.display]="(showMessage ? 'inherit': 'none')"></auth-message>
+                <auth-message [style.display]="(showMessage ? 'inherit': 'none')"></auth-message>
                 <ng-content select="button"></ng-content>
             </form>
         </div>
@@ -36,18 +38,77 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit {
 
     showMessage: boolean;
     
-    @ViewChild(AuthMessageComponent) message: AuthMessageComponent;
+    /* ViewChildren *
+         * The ViewChildren is only available inside 
+         * the ngAfterViewInit() because is a live 
+         * collection, and if we try to use it in 
+         * the ngAfterContentInit() it won't be 
+         * accessible.
+    */
+    @ViewChildren(AuthMessageComponent) message: QueryList<AuthMessageComponent>;
 
     // Configure the content child query
     @ContentChildren(AuthRememberComponent) remember: QueryList<AuthRememberComponent>;
 
     @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
 
-    onSubmit(value: User) {
-        this.submitted.emit(value);
-    }
+    constructor(private cd: ChangeDetectorRef) {
 
+    }    
     ngAfterViewInit() {
+        /* ViewChildren only available*
+         * The ViewChildren is only available inside 
+         * the ngAfterViewInit()
+         */
+        if (this.message) {
+            /* setTimeout explained *
+             * Without the setTimeout it wont' work as we
+             * are back to the old error message, 
+             * Error: 
+             * ExpressionChangedAfterItHasBeenCheckedError: 
+             * Expression has changed after it was checked.    
+             * Previous value: '7'. Current value: '30'.
+             * 
+             * Why does it work with the setTimeout ??
+             *  A. this is because Angular change detection and
+             *  if we ship this code to production it wouldn't 
+             * actually throw an error, is the way change 
+             * detection works when building the application 
+             * but when we enable production mode Angular 
+             * won't carry out this additional safety checks
+             * for you.
+             * The reason why we get an error is because the 
+             * view has been initialized at this point and if
+             * we want to change things before hand we ideally
+             * use ngAfterContentInit() and the reason is
+             * because we are mutating data after the view
+             * has been completed, and the only way to fix
+             * this is using the built in APIs which ties in
+             * with change detection using a change detection
+             * ref.
+             *
+            setTimeout(() => {
+                this.message.forEach((message)=>{
+                    message.days = 30;
+                })
+            });
+            */
+            this.message.forEach((message)=>{
+                message.days = 30;
+            });
+            //  
+            // 
+            /**
+             * The following
+             * this.cd.detectChanges();
+             * won't make angular to do the
+             * additional check that is throwing the error.
+             * This is a way we can use the change detector 
+             * to say that a change has been made after the
+             * view has been initialized.
+             */
+            this.cd.detectChanges();
+        }
         // this causing an error saying, 
         /**
          * Error: ExpressionChangedAfterItHasBeenCheckedError: 
@@ -75,13 +136,8 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit {
          */
         // this.message.days = 30;
     }
-
+    
     ngAfterContentInit() {
-
-        if (this.message) {
-            this.message.days = 30;
-        }
-
         /**
          * we have a content child (remember), 
          * and then we check its existance
@@ -92,38 +148,16 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit {
              * we then get the new value passed in, and then we update a local
              * property inside here called "showMessage: boolean"
              */
-
+            
             //this.remember.checked.subscribe((checked: boolean)=> {this.showMessage = checked;})
             this.remember.forEach( (item)=> {
                 item.checked.subscribe((checked: boolean) => this.showMessage = checked);
             }) ; 
         }
     }
-
+    
+    onSubmit(value: User) {
+        this.submitted.emit(value);
+    }
     
 }
-
-/* Implementation Comments *
- * you learn how to create a view child
- * query where we using the AuthMessageComponent 
- * 
- * @ViewChild(AuthMessageComponent) message: 
- *  AuthMessageComponent;
- * 
- * and we are binding it to a local variable called
- * message. 
- * It's a view child because it lives in the existing 
- * view of the component and it is not projected because
- * we'd call it ContentChild. 
- * 
- * Optionally we can use the ngAfterViewInit() to setup
- * something like a subscription, however if we want to 
- * change a particular data before the view has been 
- * initialized then WE WANT TO USE ngAfterContentInit() 
- * where we do a safety check and where we set the value
- * 
- *    if (this.message) {
- *       this.message.days = 30;
- *    }
- * 
- */
