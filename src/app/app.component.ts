@@ -1,4 +1,4 @@
-import { Component, ViewContainerRef, ViewChild, ComponentFactoryResolver, AfterContentInit } from '@angular/core';
+import { Component, ViewContainerRef, ComponentRef, ViewChild, ComponentFactoryResolver, AfterContentInit } from '@angular/core';
 import { User } from './auth-form/auth-form.interface';
 
 import { AuthFormComponent } from './auth-form/auth-form.component';
@@ -7,13 +7,15 @@ import { AuthFormComponent } from './auth-form/auth-form.component';
   selector: 'app-root',
   template: `
     <div>
+      <button (click)="destroyComponent()">Destroy</button>
       <div #entry></div>
     </div>
-
   `,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterContentInit{
+
+  component: ComponentRef<AuthFormComponent>;
 
   // the read property changes what we get back, 
   // ViewContainerRef will give us a different lookup token
@@ -46,7 +48,12 @@ export class AppComponent implements AfterContentInit{
 
     const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
 
-    const component = this.entry.createComponent(authFormFactory);
+    this.component = this.entry.createComponent(authFormFactory);
+
+    // we can override the title property using the component instance
+    this.component.instance.title = 'Create account'; 
+    // subscribe to the output
+    this.component.instance.submitted.subscribe((this.loginUser));
     /* add entryComponents in the module *
      * we may see the following:
      * 
@@ -59,11 +66,21 @@ export class AppComponent implements AfterContentInit{
      * and we need to use the entryComponents option.
      */
 
-  }
+  
+  
+  
+  
+  
+    }
 
   loginUser(user: User) {
     console.log('Login', user);
   }  
+
+  destroyComponent(){
+    this.component.destroy();
+  }
+
 }
 
 
