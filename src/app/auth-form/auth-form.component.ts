@@ -1,6 +1,6 @@
 // To accesss to the child component we need ContentChild decorator, 
 // and AfterContentInit 
-import { Component, ChangeDetectorRef, ElementRef, Output,ViewChild, EventEmitter, ViewChildren, AfterViewInit, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
+import { Component, Renderer, ChangeDetectorRef, ElementRef, Output,ViewChild, EventEmitter, ViewChildren, AfterViewInit, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 
 import { AuthMessageComponent } from './auth-message.component';
 
@@ -55,15 +55,33 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit {
 
     @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
 
-    constructor(private cd: ChangeDetectorRef) {
+    constructor(
+        private renderer: Renderer,
+        private cd: ChangeDetectorRef) {
 
     }    
     ngAfterViewInit() {
 
+        /**
+         * To keep the application platform safe we 
+         * use the Angular Renderer.
+         * 
+         * Why would you use the Platform rendered instead
+         * of using the nativeElement; the renderer is 
+         * platform agnostic; because we can deploy to 
+         * mobile environments and Angular is abstracting 
+         * this layers for you depending on the environment 
+         * we are deploying or distributing the code.
+         * Web and mobile you'd use Renderer.
+         * 
+         */
+        this.renderer.setElementAttribute(this.email.nativeElement, 'placeholder', 'Enter your email address');
+        this.renderer.setElementClass(this.email.nativeElement, 'email', true);
+        this.renderer.invokeElementMethod(this.email.nativeElement, 'focus');
         // this.email 
-        this.email.nativeElement.setAttribute('placeholder', 'Enter your email address');
-        this.email.nativeElement.classList.add('email');
-        this.email.nativeElement.focus();
+        // this.email.nativeElement.setAttribute('placeholder', 'Enter your email address');
+        // this.email.nativeElement.classList.add('email');
+        // this.email.nativeElement.focus();
         /* ViewChildren only available*
          * The ViewChildren is only available inside 
          * the ngAfterViewInit()
