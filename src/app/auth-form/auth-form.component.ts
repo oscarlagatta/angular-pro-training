@@ -1,6 +1,6 @@
 // To accesss to the child component we need ContentChild decorator, 
 // and AfterContentInit 
-import { Component, Output, EventEmitter, ContentChild, AfterContentInit } from '@angular/core';
+import { Component, Output, EventEmitter, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 
 import { User } from './auth-form.interface';
 // In order to get access to the child component we need to import that 
@@ -41,7 +41,7 @@ export class AuthFormComponent implements AfterContentInit {
     showMessage: boolean;
 
     // Configure the content child query
-    @ContentChild(AuthRememberComponent) remember: AuthRememberComponent;
+    @ContentChildren(AuthRememberComponent) remember: QueryList<AuthRememberComponent>;
 
     @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
 
@@ -60,9 +60,13 @@ export class AuthFormComponent implements AfterContentInit {
              * we then get the new value passed in, and then we update a local
              * property inside here called "showMessage: boolean"
              */
-            this.remember.checked.subscribe((checked: boolean)=> {
-                this.showMessage = checked;
-            })
+
+            //this.remember.checked.subscribe((checked: boolean)=> {this.showMessage = checked;})
+            this.remember.forEach( (item)=> {
+                item.checked.subscribe((checked: boolean) => this.showMessage = checked);
+            }) ; 
+            console.log(this.remember);
+            
         }
     }
 }
