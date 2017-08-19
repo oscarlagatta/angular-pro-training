@@ -40,7 +40,7 @@ export class AppComponent implements AfterContentInit{
 
   /* Resolver *
    * Here we can use the resolver and the entry ViewChild
-   * to intantiate the component and use the ViewContainerRef 
+   * to instantiate the component and use the ViewContainerRef 
    * to create the component an inject it to the template 
    * here <div #entry></div>
    */
