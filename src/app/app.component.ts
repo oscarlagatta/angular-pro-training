@@ -8,6 +8,7 @@ import { AuthFormComponent } from './auth-form/auth-form.component';
   template: `
     <div>
       <button (click)="destroyComponent()">Destroy</button>
+       <button (click)="moveComponent()">Move</button>
       <div #entry></div>
     </div>
   `,
@@ -47,31 +48,24 @@ export class AppComponent implements AfterContentInit{
   ngAfterContentInit() {
 
     const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
-
-    this.component = this.entry.createComponent(authFormFactory);
-
-    // we can override the title property using the component instance
-    this.component.instance.title = 'Create account'; 
-    // subscribe to the output
-    this.component.instance.submitted.subscribe((this.loginUser));
-    /* add entryComponents in the module *
-     * we may see the following:
-     * 
-     * ERROR Error: No component factory found for 
-     * AuthFormComponent. Did you add it to 
-     * @NgModule.entryComponents.
-     * 
-     * So if we adding dynamically components the way we 
-     * are doing it now, we need to open the auth form module,
-     * and we need to use the entryComponents option.
+    this.entry.createComponent(authFormFactory); // default index of -1
+    /**
+     * if I want to put the component in a different order we 
+     * use the index parameter of the createComponent
      */
-
-  
-  
-  
-  
-  
+    this.component = this.entry.createComponent(authFormFactory, 0);
+    this.component.instance.title = 'Create account'; 
+    this.component.instance.submitted.subscribe((this.loginUser));
+    
     }
+
+  moveComponent() {
+    /** we use the entry which is the ViewContainerRef which is 
+     * using the ViewChild
+    */
+    this.entry.move(this.component.hostView, 1);
+
+  }
 
   loginUser(user: User) {
     console.log('Login', user);
