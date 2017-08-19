@@ -19,6 +19,13 @@ import { AuthMessageComponent } from "./auth-message.component";
     exports: [
         AuthFormComponent,
         AuthRememberComponent
+    ],
+    entryComponents: [ 
+        AuthFormComponent // when we need dynamic components we need to use 
+                          // entryComponents:[] 
+                          // telling this is the dynamic component which may
+                          // not be compiled at runtime but later on in our
+                          // application.
     ]
 })
 export class AuthFormModule {

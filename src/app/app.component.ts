@@ -1,49 +1,91 @@
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef, ViewChild, ComponentFactoryResolver, AfterContentInit } from '@angular/core';
 import { User } from './auth-form/auth-form.interface';
+
+import { AuthFormComponent } from './auth-form/auth-form.component';
 
 @Component({
   selector: 'app-root',
   template: `
     <div>
-      <auth-form (submitted)="loginUser($event)">
-        <!-- content child of auth-form -->
-        <h3>Login</h3>
-        <auth-remember (checked)="rememberUser($event)"></auth-remember>
-        <button type="submit">
-          Login
-        </button>
-        <!-- end of content child of auth-form -->
-        
-      </auth-form>
+      <div #entry></div>
     </div>
 
   `,
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements AfterContentInit{
 
-  /**
-   * NOTE:
-   * If we were using the checkbox inside any particular api request
-   * such as if we want to remember whether the user has been checked in
-   * or not, we can bind to a component like in this example.
-   * And using a flan inside the component (rememberMe), inside the 
-   * loginUser call back we add the (this.rememberMe) to the HTTP request 
-   * or pass it to a Service. 
-   * It doesn't have to be strictly part of the form, that's where content
-   * projection and binding to a component is actually really helpful.
+  // the read property changes what we get back, 
+  // ViewContainerRef will give us a different lookup token
+  @ViewChild('entry', { read: ViewContainerRef }) entry: ViewContainerRef;
+
+  /* ComponentFactoryResolver *
+   * 
+   * @param resolver Allows us to create a component factory based on the dinamic component we've imported 
+   * 'AuthFormComponent' and we will use the ViewContaineRef 
+   * #entry to allow us to create a component in the particular
+   * <div #entry>.
+   * Because we are using ViewChild we also need to add another
+   * Life Cycle hook 'AfterContentInit', we want to do this 
+   * with the AfterContentInit rather than the AfterViewInit 
+   * because we can setup our components and subscribe to the
+   * outputs and change the data before the actual view has 
+   * been initialized.  
    */
-  rememberMe: boolean = false;
+  constructor(
+    private resolver: ComponentFactoryResolver
+  ){}
 
-  createUser(user: User) {
-    console.log('Create account', user);
+  /* Resolver *
+   * Here we can use the resolver and the entry ViewChild
+   * to intantiate the component and use the ViewContainerRef 
+   * to create the component an inject it to the template 
+   * here <div #entry></div>
+   */
+  ngAfterContentInit() {
+
+    const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
+
+    const component = this.entry.createComponent(authFormFactory);
+    /* add entryComponents in the module *
+     * we may see the following:
+     * 
+     * ERROR Error: No component factory found for 
+     * AuthFormComponent. Did you add it to 
+     * @NgModule.entryComponents.
+     * 
+     * So if we adding dynamically components the way we 
+     * are doing it now, we need to open the auth form module,
+     * and we need to use the entryComponents option.
+     */
+
   }
+
   loginUser(user: User) {
-    console.log('Login', user, this.rememberMe);
-  }
-  
-  rememberUser(remember: boolean){
-    this.rememberMe = remember;
-  }
-
+    console.log('Login', user);
+  }  
 }
+
+
+/* Implementation details *
+ * 
+ * To create a dynamic component we need to setup an entry point 
+ * like <div #entry></div> 
+ * We use a ViewContainerRef, we need to inject the ComponentFactoryResolver,
+ * we then create an instance of that component 
+ * const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
+ * const component = this.entry.createComponent(authFormFactory);
+ * 
+ * It's broken down into Const(ants) so we can create more than one instance of the
+ * same component. So if we create it multiple times we can rename it like this
+ * 
+ * const component2 = this.entry.createComponent(authFormFactory);
+ * const component3 = this.entry.createComponent(authFormFactory);
+ * const component4 = this.entry.createComponent(authFormFactory);
+ * 
+ * 
+ * And the fact we are using 'read' as ViewContainerRef switching to a 
+ * ViewContainerRef instead of an ElementRef, enables us to create a 
+ * particular component. (entry.createComponent)
+ * 
+ */
