@@ -1,4 +1,4 @@
-import { Directive, HostListener, ElementRef } from '@angular/core';
+import { Directive, HostListener, HostBinding, ElementRef } from '@angular/core';
 
 @Directive({
     /**
@@ -8,6 +8,17 @@ import { Directive, HostListener, ElementRef } from '@angular/core';
     selector: '[credit-card]'
 })
 export class CreditCardDirective {
+    /**
+     * With HostBining we can bind to a particular property 
+     * on the host, the host of this credit-card directive 
+     * which is the INPUT element. 
+     * we can then add a property or change the value of 
+     * a property using the @HostBinding. In this case
+     * we bind to the style object and we want to bind
+     * to the border 
+     */
+    @HostBinding('style.border')
+    border: string;
     /**
      * We pass the element input, so we create
      * an event listener for the Host, which is 
@@ -33,5 +44,17 @@ export class CreditCardDirective {
         }
         
         input.value = numbers.join(' ');
+        
+        this.border = '';
+        /**
+         * we use a regular expression and the 
+         * test method on the trimmed; so in this
+         * case will check that the string doesn't
+         * contain any numbers; if doesn't contain
+         * only numbers we set the red border.
+         */
+        if (/[^\d]+/.test(trimmed)) {
+            this.border = '1px solid red';
+        }
     }
 }
