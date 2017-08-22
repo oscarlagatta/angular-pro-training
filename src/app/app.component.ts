@@ -4,9 +4,14 @@ import { Component } from '@angular/core';
   selector: 'app-root',
   template: `
     <div>
-      <example-one></example-one>
-      <example-two></example-two>
-      <example-three></example-three>
+      <label>
+        Credit Card Number
+        <input 
+          name="credit-card"
+          type="text"
+          placeholder="enter your 16-digit card number"
+          credit-card>
+      </label>
     </div>
   `
 })
