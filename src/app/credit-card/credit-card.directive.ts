@@ -4,6 +4,9 @@ import { Directive, HostListener, HostBinding, ElementRef } from '@angular/core'
     /**
      * Because we are using an attribute in the input tag called
      * credit-card we need to use an attribute selector using [] 
+     * so the [] is a query selector if you'd like to select something
+     * in plain javascript we use [] to denote the fact is an attribute
+     * 
      */
     selector: '[credit-card]'
 })
@@ -29,9 +32,12 @@ export class CreditCardDirective {
      */
     @HostListener('input', ['$event'])
     onKeyDown(event: KeyboardEvent) {
+
+        // we cast the input to be of type HTMLInputElement
         const input = event.target as HTMLInputElement;
 
         let trimmed = input.value.replace(/\s+/g, '');
+        
         if (trimmed.length > 16)
         {
             trimmed = trimmed.substr(0,16);
