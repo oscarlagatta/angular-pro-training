@@ -16,7 +16,8 @@ import { Product } from '../../models/product.interface';
 
                 <stock-selector 
                     [parent]="form"
-                    [products]="products">
+                    [products]="products"
+                    (added)="addStock($event)">
                 </stock-selector>
 
                 <stock-products 
@@ -71,6 +72,11 @@ export class StockInventoryComponent {
     }
     onSubmit() {
         console.log('submit', this.form.value);
+    }
+
+    addStock(stock) {
+        const control = this.form.get('stock') as FormArray;
+        control.push(this.createStock(stock));
     }
 
 }
