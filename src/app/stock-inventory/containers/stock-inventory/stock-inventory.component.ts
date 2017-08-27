@@ -28,6 +28,7 @@ import { Product , Item } from '../../models/product.interface';
 
                 <stock-products 
                     [parent]="form"
+                    [map]="productMap"
                     (removed)="removeStock($event)">
                 </stock-products>
 
@@ -47,6 +48,9 @@ import { Product , Item } from '../../models/product.interface';
 })
 export class StockInventoryComponent implements OnInit {
 
+    products: Product[];
+    
+    productMap: Map<number, Product>;
 
     constructor(
         private fb: FormBuilder,
@@ -56,25 +60,24 @@ export class StockInventoryComponent implements OnInit {
 
     ngOnInit() {
      
-        this.stockService.getCartItems().subscribe( data=> console.log('data',data));
-        
         const cart = this.stockService.getCartItems();
         const products= this.stockService.getProducts();   
 
         Observable
-        .forkJoin(cart, products)
-        .subscribe(([cart, products]: [Item[], Product[]]) => {
-          
-            console.log('cart', cart);
-            console.log('products', products);
-            
-        });
+            .forkJoin(cart, products)
+            .subscribe( ([cart, products]: [Item[], Product[]]) => {
+                
+                const myMap = products.map<[number, Product]>( product => [product.id, product])
+
+                this.productMap = new Map<number, Product>(myMap);
+                this.products = products;
+
+                cart.forEach( item => this.addStock(item));
+            });
 
     }
 
-    products: Product[];
-
-    productMap: Map<number, Product>;
+ 
     
     form = this.fb.group({
         store: this.fb.group({
