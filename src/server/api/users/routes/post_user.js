@@ -26,7 +26,6 @@ module.exports = {
       // to do in the app afterwards
       // reply({ message: 'user added!' });
 
-      console.log('username : ', request.pre.userName);
       reply(usersData.find(item => item.userName == request.pre.userName));
     }, // handler
     description: 'This endpoint will create a new user'

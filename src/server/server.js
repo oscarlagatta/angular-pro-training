@@ -43,29 +43,11 @@ server.connection({
 // is to pass the module and a callback
 server.register( Inert, ()=>{});
 
-// To configure the plugin, we can pass 
-// an object which has an options key 
-server.register({
-    register: Geolocate,
-    options: {
-        enabledByDefault: true
-    }
-}, err => console.log(err));
-
 
 // If you want to view the documentation from the API 
 // you need to install the inert and vision plugs-ins 
 // which support templates and static content serving.
 server.register(Vision, ()=> {});
-server.register({
-    register: HapiSwagger,
-    options: {
-        info: {
-            'title': 'API',
-            'version': Pack.version
-        }
-    }
-}, error => console.log(error));
 
 // We're defining our route configuration in separate files
 // and creating new routes with that configuration here
