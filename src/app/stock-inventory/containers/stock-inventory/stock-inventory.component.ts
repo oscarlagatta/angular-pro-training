@@ -1,6 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormArray, FormBuilder} from '@angular/forms';
-import { Product } from '../../models/product.interface';
+
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/Rx';
+
+import { StockInventoryService } from '../../services/stock-inventory.service';
+
+import { Product , Item } from '../../models/product.interface';
 
 @Component({
     selector: 'stock-inventory',
@@ -39,21 +45,37 @@ import { Product } from '../../models/product.interface';
         </div>
     `
 })
-export class StockInventoryComponent {
+export class StockInventoryComponent implements OnInit {
 
 
-    constructor(private fb: FormBuilder){
+    constructor(
+        private fb: FormBuilder,
+        private stockService: StockInventoryService){
+        Observable.forkJoin()    
+    }
+
+    ngOnInit() {
+     
+        this.stockService.getCartItems().subscribe( data=> console.log('data',data));
+        
+        const cart = this.stockService.getCartItems();
+        const products= this.stockService.getProducts();   
+
+        Observable
+        .forkJoin(cart, products)
+        .subscribe(([cart, products]: [Item[], Product[]]) => {
+          
+            console.log('cart', cart);
+            console.log('products', products);
+            
+        });
 
     }
 
-    products: Product[] = [
-        { "id": 1, "price": 2800, "name":"MacBook Pro"},
-        { "id": 2, "price": 50, "name":"USB-C Adaptpor"},
-        { "id": 3, "price": 400, "name":"iPod"},
-        { "id": 4, "price": 900, "name":"iPhone"},
-        { "id": 5, "price": 600, "name":"Apple Watch"},
-    ];
+    products: Product[];
 
+    productMap: Map<number, Product>;
+    
     form = this.fb.group({
         store: this.fb.group({
             branch: '',
@@ -63,10 +85,7 @@ export class StockInventoryComponent {
         // FormArray allows us to create a collection 
             // of particular FormControls or particular FormGroups
             // but we manage and compose these ourselves
-        stock: this.fb.array([
-           this.createStock({ product_id: 1, quantity: 10}),
-           this.createStock({ product_id: 3, quantity: 50})
-        ])
+        stock: this.fb.array([])
     });
 
 
