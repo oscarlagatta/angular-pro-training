@@ -19,7 +19,7 @@ import { Product } from '../../models/product.interface';
                         <div class="stock-product__name">
                             {{ getProduct(item.value.product_id).price | currency: 'GBP':true }}
                         </div>
-                        <input type="numer"
+                        <input type="number"
                             step="10"
                             min="10"
                             max="1000"

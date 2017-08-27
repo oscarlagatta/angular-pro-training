@@ -32,6 +32,9 @@ import { Product , Item } from '../../models/product.interface';
                     (removed)="removeStock($event)">
                 </stock-products>
 
+                <div class="stock-inventory__price">
+                    Total: {{ total | currency:'GBP':true}}
+                </div>
                 <div class="stock-inventory__buttons">
                     <button
                      type="submit"
@@ -49,6 +52,8 @@ import { Product , Item } from '../../models/product.interface';
 export class StockInventoryComponent implements OnInit {
 
     products: Product[];
+
+    total: number;
     
     productMap: Map<number, Product>;
 
@@ -73,11 +78,22 @@ export class StockInventoryComponent implements OnInit {
                 this.products = products;
 
                 cart.forEach( item => this.addStock(item));
+
+                this.calculateTotal(this.form.get('stock').value);
+                this.form.get('stock')
+                    .valueChanges.subscribe( value => 
+                       this.calculateTotal(value));
             });
 
     }
 
- 
+    calculateTotal(value: Item[]) {
+        const  total = value.reduce((prev, next) => {
+            return prev + (next.quantity * this.productMap.get(next.product_id).price)
+        }, 0);
+
+        this.total  = total;
+    }
     
     form = this.fb.group({
         store: this.fb.group({
