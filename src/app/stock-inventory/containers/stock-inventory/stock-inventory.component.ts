@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormArray, FormBuilder} from '@angular/forms';
+import { FormControl, FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
@@ -97,8 +97,8 @@ export class StockInventoryComponent implements OnInit {
     
     form = this.fb.group({
         store: this.fb.group({
-            branch: '',
-            code: ''
+            branch: ['', Validators.required],
+            code: ['', Validators.required]
         }),
         selector: this.createStock({}),
         // FormArray allows us to create a collection 
