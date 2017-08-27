@@ -44,5 +44,14 @@ export class StockSelectorComponent {
 
     onAdd() {
         this.added.emit(this.parent.get('selector').value);
+
+        // This allows to reset the control to initial values
+        // Select stock, and 10
+        // available are patchValue, or alternatively setValue but
+        // do not actually reset the form
+        this.parent.get('selector').reset({
+            product_id: '',
+            quantity: 10
+        });
     }
 }
