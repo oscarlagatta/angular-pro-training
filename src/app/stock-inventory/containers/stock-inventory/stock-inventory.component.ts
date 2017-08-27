@@ -107,7 +107,7 @@ export class StockInventoryComponent implements OnInit {
             // of particular FormControls or particular FormGroups
             // but we manage and compose these ourselves
         stock: this.fb.array([])
-    });
+    }, {validator: StockValidators.checkStockExists});
 
 
     createStock(stock) {
