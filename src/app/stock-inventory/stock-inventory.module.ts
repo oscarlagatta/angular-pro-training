@@ -11,12 +11,15 @@ import { StockSelectorComponent } from './components/stock-selector/stock-select
 
 import { StockInventoryService } from './services/stock-inventory.service';
 
+import { StockCounterComponent } from './components/stock-counter/stock-counter.component';
+
 @NgModule({
     declarations: [
         StockInventoryComponent,
         StockBranchComponent,
         StockProductsComponent,
-        StockSelectorComponent
+        StockSelectorComponent,
+        StockCounterComponent
     ],
     providers: [
         StockInventoryService
