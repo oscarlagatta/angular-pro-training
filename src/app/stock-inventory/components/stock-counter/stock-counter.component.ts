@@ -71,8 +71,6 @@ export class StockCounterComponent implements ControlValueAccessor {
         }
 
         this.onTouch();
-
-
     }
 
 
@@ -81,7 +79,7 @@ export class StockCounterComponent implements ControlValueAccessor {
             this.value = this.value - this.step;
             this.onModelChange(this.value);
         }
-        
+
         this.onTouch();
     }
 
