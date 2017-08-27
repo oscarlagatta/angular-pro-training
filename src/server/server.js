@@ -56,6 +56,8 @@ server.route(require('./api/users/routes/get_users'));
 server.route(require('./api/users/routes/post_user'));
 server.route(require('./api/stock-inventory/routes/get_products'));
 server.route(require('./api/stock-inventory/routes/get_cart'));
+server.route(require('./api/stock-inventory/routes/get_branch'));
+server.route(require('./api/stock-inventory/routes/get_branches'));
 
 // Starting the server is as simple as calling
 // server.start. We can throw an error if something

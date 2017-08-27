@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, URLSearchParams } from '@angular/http';
 
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -23,7 +23,7 @@ export class StockInventoryService {
         .catch((error: any) => Observable.throw(error.json()));
     }
 
-    getProducts(): Observable<any[]>{
+    getProducts(): Observable<Product[]>{
         return this.http
             .get('http://localhost:3000/api/v1/products')
             .map((response: Response) => {
@@ -31,4 +31,36 @@ export class StockInventoryService {
             })
             .catch((error: any) => Observable.throw(error));
     }
+
+    // checkBranchId(id: string): Observable<boolean> {
+    //     let search = new URLSearchParams();
+    //     search.set('id', id);
+    //     return this.http
+    //         .get('http://localhost:3000/api/v1/branches', { search })
+    //         .map((response: Response) => {
+    //             console.log(response.json());
+    //             return response.json();
+    //         })
+    //         .map((response: any[]) => !!response.length)
+    //         .catch((error: any) => Observable.throw(error));
+    // }
+
+
+    checkBranchId(id: string): Observable<boolean> {
+        let search = new URLSearchParams();
+        search.set('id', id);
+        console.log('branchId selected', id);
+        return this.http
+          .get(`http://localhost:3000/api/v1/branches/${id}`)
+          .map((response: Response) => {
+              console.log(response.json());
+              return response.json();
+            })
+          .map((response: any) => {
+
+            console.log('response.length', response);
+            return !!response.id;
+        })
+          .catch((error: any) => Observable.throw(error.json()));
+      }
 }

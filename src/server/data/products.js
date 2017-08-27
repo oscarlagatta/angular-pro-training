@@ -13,5 +13,11 @@ module.exports = [{
         { id: 3, price: 400,  name: 'iPod'},
         { id: 4, price: 900,  name: 'iPhone'},
         { id: 5, price: 600,  name: 'Apple Watch'}
+    ],
+    branches: [
+        { id: 'B182'},
+        { id: 'A779'},
+        { id: 'C390'},
+        { id: 'R262'}
     ]}
 ]
